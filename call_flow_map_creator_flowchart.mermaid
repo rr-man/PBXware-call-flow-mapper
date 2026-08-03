@@ -1,0 +1,44 @@
+flowchart TD
+    Start([Open the tool]) --> Landing{Landing screen}
+
+    Landing -->|"View the call map"| RefMap["Reference call map<br/>(how PBXware routes any call)"]
+    Landing -->|"Map my system &rarr;"| Upload["Upload view:<br/>Load a file to view your call flow map"]
+
+    Upload --> Choice{Get a workbook}
+    Choice -->|"Drop / choose .xlsx"| Stage[Stage the file]
+    Choice -->|"Attach a sample"| Stage
+    Choice -->|"Download a sample"| DL[("Sample .xlsx<br/>Property Management / Office Dental")] --> Stage
+
+    Stage --> StartBtn[/"Start call flow map"/]
+    StartBtn --> Parse["Parse workbook in the browser<br/>DID routing · IVR · Operation Times ·<br/>Dial Group · ERG · Queue · Agents ·<br/>Extension · Voicemail · Conference"]
+    Parse --> Summary["Summary + pickers:<br/>Map a DID / Queue / Conference"]
+
+    Summary --> Notice[/"Notification: select a call route<br/>— pick one DID from the list"/]
+    Notice --> Trace["Trace the DID to every destination<br/>Operation Times gates · IVR options ·<br/>queues · extensions · voicemail · conference"]
+    Trace --> Render[["Render the call map (SVG)"]]
+
+    Render --> TX{"Transcribe<br/>greetings?"}
+    TX -->|Yes| Tx1["Transcribe audio (highlighted button)"]
+    Tx1 --> Tx2["Speech-to-text on IVR greeting audio"]
+    Tx2 --> Tx3["Attach transcript to one or more IVRs"]
+    Tx3 --> Render
+
+    Render --> Export{"Download?"}
+    Export -->|"Choose formats"| Fmt["PDF · SVG · Interactive HTML ·<br/>Transcripts .txt · Visio .vsdx"]
+    Fmt --> Out[("Exported file / .zip<br/>opens in browser or new tab when embedded")]
+
+    RefMap --> Render
+
+    classDef entry fill:#25406b,stroke:#1b2f50,color:#ffffff;
+    classDef decision fill:#f0a020,stroke:#c07a12,color:#1c2b3a;
+    classDef process fill:#eaf1fb,stroke:#2b6cb0,color:#1c2b3a;
+    classDef render fill:#e9f7ef,stroke:#2e8b57,color:#14532d;
+    classDef io fill:#f4ecfb,stroke:#7a5cc0,color:#2a1a4a;
+    classDef data fill:#eef1f4,stroke:#516274,color:#1c2b3a;
+
+    class Start entry;
+    class Landing,Choice,TX,Export decision;
+    class Upload,Stage,Parse,Summary,Trace,RefMap,Tx1,Tx2,Tx3 process;
+    class Render render;
+    class StartBtn,Notice,Fmt io;
+    class DL,Out data;
